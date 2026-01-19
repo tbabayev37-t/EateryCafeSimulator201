@@ -1,0 +1,27 @@
+﻿@model CheffCreateVM
+<div class="container"
+	<div class="row">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label asp-for="Fullname">Fullname</label>
+                <input asp-for="Fullname" class="form-control" placeholder="Enter fullname">
+               <span asp-validation-for="Fullname" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="Description">Description</label>
+                <input asp-for="Description" class="form-control" placeholder="Enter the description">
+               <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="Image">Image</label>
+                <input asp-for="Image" class="form-control" placeholder="Upload the image">
+               <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+              <div class="form-group">
+               <select asp-for="DepartmentId" class="form-control" asp-items="@ViewBag.Departments"></select>
+               <span asp-validation-for="DepartmentId" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+	</div>
+</div>

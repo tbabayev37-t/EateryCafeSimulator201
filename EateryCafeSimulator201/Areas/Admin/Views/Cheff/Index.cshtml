@@ -1,0 +1,40 @@
+﻿@model List<CheffGetVM>
+<div class="container">
+	<div class="row">
+        <div class="col1">
+            <a asp-action="Create" class="btn btn-success">Create</a>
+            </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Fullname</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Department name</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th scope="row">@item.Id</th>
+                        <th scope="row">
+                            <img width="30" height="30" src="~/images/@item.ImagePath" />
+                        </th>
+                        <td>@item.Fullname</td>
+                        <td>@item.Description</td>
+                        <td>@item.DepartmentName</td>
+                        <td>
+                            <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-warning">Update</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+               
+              
+            </tbody>
+        </table>
+	</div>
+</div>
