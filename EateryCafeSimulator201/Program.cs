@@ -1,3 +1,6 @@
+using EateryCafeSimulator201.Contexts;
+using Microsoft.EntityFrameworkCore;
+
 namespace EateryCafeSimulator201
 {
     public class Program
@@ -8,6 +11,10 @@ namespace EateryCafeSimulator201
 
            
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<AppDbContext>(opt =>
+            {
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+            });
 
             var app = builder.Build();
 
