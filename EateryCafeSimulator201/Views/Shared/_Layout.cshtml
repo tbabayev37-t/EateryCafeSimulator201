@@ -68,7 +68,17 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="#">Call Now! <i class="fa fa-phone"></i> 010 020 0340</a></li>
                     <a href="#footer" class="section-btn">Reserve a table</a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-action="LogOut" asp-controller="Account">@User.Identity.Name</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Login" asp-controller="Account">Login</a>
+                        <a asp-action="Register" asp-controller="Account">Sign In</a>
+                    }
                 </ul>
+              
             </div>
 
         </div>

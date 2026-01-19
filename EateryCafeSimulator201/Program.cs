@@ -1,4 +1,6 @@
 using EateryCafeSimulator201.Contexts;
+using EateryCafeSimulator201.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EateryCafeSimulator201
@@ -15,6 +17,10 @@ namespace EateryCafeSimulator201
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
             });
+            builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
+            {
+
+            }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
             var app = builder.Build();
 
@@ -24,7 +30,7 @@ namespace EateryCafeSimulator201
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
                 app.MapControllerRoute(

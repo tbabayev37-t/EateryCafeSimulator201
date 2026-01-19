@@ -1,0 +1,25 @@
+﻿@model LoginVM
+<br />
+<br />
+<br />
+<div class="container"
+    <div class="row">
+        <h2>Login</h2>
+        <form method="post">
+             <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" placeholder="Enter the email">
+               <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" placeholder="Enter the password">
+               <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+          
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
