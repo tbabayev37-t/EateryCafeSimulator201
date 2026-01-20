@@ -22,36 +22,35 @@ public class CheffController : Controller
     }
     public async Task<IActionResult> Index()
     {
-        var cheffs = await _context.Cheffs.Select(opt => new CheffGetVM()
+        var cheff = await _context.Cheffs.Select(opt => new CheffGetVM()
         {
             Id = opt.Id,
-            ImagePath = opt.ImagePath,
             Fullname = opt.Fullname,
-            Description = opt.Description,
-            DepartmentName = opt.Department.Name
+            Description=opt.Description,
+            DepartmentName=opt.Department.Name
         }).ToListAsync();
-        return View(cheffs);
+        return View(cheff);
     }
     public async Task<IActionResult> Create()
     {
-        await SendDepartmentWithViewModel();
+        await SendDepartmentWithViewBag();
         return View();
     }
     [HttpPost]
     public async Task<IActionResult> Create(CheffCreateVM vm)
     {
-        await SendDepartmentWithViewModel();
+        await SendDepartmentWithViewBag();
         if (!ModelState.IsValid)
         {
             return View(vm);
         }
-        var existDepartment = await _context.Departments.AnyAsync(x=>x.Id == vm.DepartmentId);
+        var existDepartment = await _context.Departments.AnyAsync(x => x.Id == vm.DepartmentId);
         if (!existDepartment)
         {
-            ModelState.AddModelError("", "This department is not valid");
+            ModelState.AddModelError("", "This department is nt valid");
             return View(vm);
         }
-        if(vm.Image.Length > 2 * 1024 * 1024)
+        if (vm.Image.Length > 2 * 1024 * 1024)
         {
             ModelState.AddModelError("image", "Image maximum size must be 2 mb");
             return View(vm);
@@ -67,11 +66,12 @@ public class CheffController : Controller
             Fullname = vm.Fullname,
             Description = vm.Description,
             DepartmentId = vm.DepartmentId,
-            ImagePath = uniqueFileNmae            
+            ImagePath = uniqueFileNmae
         };
         await _context.AddAsync(cheff);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+
     }
     public async Task<IActionResult> Update(int id)
     {
@@ -83,73 +83,72 @@ public class CheffController : Controller
         CheffUpdateVM vm = new()
         {
             Id = cheff.Id,
-            Fullname = cheff.Fullname,
+            Fullname= cheff.Fullname,
             Description = cheff.Description,
             DepartmentId = cheff.DepartmentId
         };
-        await SendDepartmentWithViewModel();
+        await SendDepartmentWithViewBag();
         return View(vm);
     }
     [HttpPost]
     public async Task<IActionResult> Update(CheffUpdateVM vm)
     {
-        await SendDepartmentWithViewModel();
+        await SendDepartmentWithViewBag();
         if (!ModelState.IsValid)
         {
             return View(vm);
         }
-        var cheff = await _context.Cheffs.FindAsync(vm.Id);
-        if(cheff is null)
+        var existcheff = await _context.Cheffs.FindAsync(vm.Id);
+        if(existcheff == null)
         {
             return NotFound();
         }
-        var isExistDepartment = await _context.Departments.AnyAsync(x => x.Id == vm.DepartmentId);
-        if(!isExistDepartment)
+        var department = await _context.Departments.AnyAsync(x => x.Id == vm.DepartmentId);
+        if(department is false)
         {
             ModelState.AddModelError("DepartmentId", "This department is not valid");
             return View(vm);
         }
         if (!vm.Image?.CheckSize(2) ?? false)
         {
-            ModelState.AddModelError("Image", "This department is not valid");
+            ModelState.AddModelError("Image", "Image must be maximum 2 mb");
             return View(vm);
         }
         if (!vm.Image?.CheckType("image") ?? false)
         {
-            ModelState.AddModelError("Image", "Only image format please!!!");
+            ModelState.AddModelError("Image", "File must be only image format");
             return View(vm);
         }
-        cheff.Fullname = vm.Fullname;
-        cheff.Description = vm.Description;
-        cheff.DepartmentId=vm.DepartmentId;
-        if(vm.Image is not null)
+        existcheff.Fullname=vm.Fullname;
+        existcheff.Description=vm.Description;
+        existcheff.DepartmentId=vm.DepartmentId;
+        if(vm.Image is { })
         {
-            string deletedPath = Path.Combine(FolderPath, cheff.ImagePath);
+            string deletedPath = Path.Combine(FolderPath, existcheff.ImagePath);
             FileHelper.DeleteFile(deletedPath);
             string newImagePath = await vm.Image.UploadFile(FolderPath);
-            cheff.ImagePath = newImagePath;
+            existcheff.ImagePath = newImagePath;
         }
-        _context.Cheffs.Update(cheff);
+        _context.Cheffs.Update(existcheff);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult>Delete(int id)
     {
-        var deletedCheff = await _context.Cheffs.FindAsync(id);
-        if(deletedCheff is null)
+        var cheff = await _context.Cheffs.FindAsync(id);
+        if(cheff == null)
         {
             return NotFound();
         }
-        _context.Cheffs.Remove(deletedCheff);
+        _context.Cheffs.Remove(cheff);
         await _context.SaveChangesAsync();
-        string deletedPath = Path.Combine(FolderPath, deletedCheff.ImagePath);
+        string deletedPath = Path.Combine(FolderPath, cheff.ImagePath);
         FileHelper.DeleteFile(deletedPath);
         return RedirectToAction(nameof(Index));
     }
-    
-    public async Task SendDepartmentWithViewModel()
+    public async Task SendDepartmentWithViewBag()
     {
-        var department = await _context.Departments.Select(t => new SelectListItem() { Text = t.Name, Value = t.Id.ToString() }).ToListAsync();
+        var department=  await _context.Departments.Select(t => new SelectListItem() { Text = t.Name, Value = t.Id.ToString() }).ToListAsync();
         ViewBag.Departments = department;
     }
 }
